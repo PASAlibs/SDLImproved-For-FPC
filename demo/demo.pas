@@ -21,6 +21,8 @@ Var
 
 Procedure Load();
 Begin
+	WindowSetting('Demo',800,600);
+	
 	click := 0;
 	font := TTF_OpenFont('CodeNewRoman.ttf', 20);
 	circle.x := 0 ; circle.y := 0 ; circle.radius := 50; circle.color := WHITE;
@@ -90,7 +92,6 @@ Begin
 End;
 
 Begin
-	WindowSetting('Demo',800,600);
 	StartApp(@load,@update,@draw,@mousepressed,@keypressed);
 	Writeln;
 End.

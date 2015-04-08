@@ -6,10 +6,10 @@ Interface
 uses crt, sysutils, gLib2D,GL, SDL, SDL_TTF, SDL_Addon;
 
 Type
-	loadType = procedure (); 
-	updateType = procedure (dt : Real); 
-	drawType = procedure (fps : Real);
-	mousepressedType = procedure (left : Boolean ; x,y : real);
+	loadType = Procedure (); 
+	updateType = Procedure (dt : Real); 
+	drawType = Procedure (fps : Real);
+	mousepressedType = Procedure (left : Boolean ; x,y : real);
 	keypressedType = Procedure (key : Integer);
 
 Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; mousepressed : mousepressedType; keypressed : keypressedType);
