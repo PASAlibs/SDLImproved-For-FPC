@@ -1,0 +1,4 @@
+SDL Improved for FPC 
+===
+Ce projet a pour but de faciliter l'utilisation de la SDL. Il se présente sous la forme d'une unit dont la procédure principale *StartApp* gère l'appel de callback crée par l'utilisateur.
+Les callbacks actuellement implémentés sont  : *Load*, *Update*, *Draw*, *MousePressed*, *KeyPressed*.
