@@ -1,0 +1,2 @@
+fpc demo.pas -Fu..
+

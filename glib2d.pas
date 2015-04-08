@@ -1,6 +1,11 @@
 (*
 * gLib2D by Geecko - A simple, fast, light-weight 2D graphics library.
-* This work is licensed under the Creative Commons BY-SA 3.0 Unported License.
+* 
+* Modified by Guillaume Samuel under the same license.
+* This work is licensed under the Creative Commons 
+* Attribution-ShareAlike 4.0 International License. 
+* To view a copy of this license, 
+* visit http://creativecommons.org/licenses/by-sa/4.0/
 *)
 
 Unit gLib2D;
@@ -26,11 +31,6 @@ Type
     gEnum           = integer;
 
 Const
-    (* Screen size constants *)
-    G_SCR_W         = 800;
-    G_SCR_H         = 600;
-    G_VOID          = 0;
-
     (* Colors *)
     RED             : gColor = (r : 255; g : 0;   b : 0;   a : 255);
     GREEN           : gColor = (r : 0;   g : 255; b : 0;   a : 255);
@@ -65,6 +65,11 @@ Const
     
     PI              = 3.141592653589;
 
+Var
+    (* Screen size constants *)
+    G_SCR_W : Word;
+    G_SCR_H : Word;
+    G_VOID : Word;
 
 (* Functions prototypes *)
 
@@ -529,6 +534,7 @@ procedure gFillCircle(cx, cy, radius : real; color : gColor);
 
 Implementation
 {$Include glib2dimplementation.pas}
+
 End.
 
 (* EOF *)

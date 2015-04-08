@@ -1,6 +1,6 @@
 {$MODE ObjFPC} 
-Program Libtest;
-uses crt,sysutils,gLib2D, SDL, SDL_TTF, SDL_Addon, SDLImproved;
+Program Demo;
+uses crt,sysutils,gLib2D, SDL_TTF, SDL_Addon, SDLImproved;
 
 Type
 	CircleType = Record
@@ -90,7 +90,7 @@ Begin
 End;
 
 Begin
-	SDL_WM_SetCaption('SDL Test', nil);
+	WindowSetting('Demo',800,600);
 	StartApp(@load,@update,@draw,@mousepressed,@keypressed);
 	Writeln;
 End.

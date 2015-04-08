@@ -3,7 +3,7 @@ Unit SDLImproved;
 
 Interface
 
-uses crt, sysutils, gLib2D, SDL, SDL_TTF, SDL_Addon;
+uses crt, sysutils, gLib2D,GL, SDL, SDL_TTF, SDL_Addon;
 
 Type
 	loadType = procedure (); 
@@ -13,13 +13,34 @@ Type
 	keypressedType = Procedure (key : Integer);
 
 Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; mousepressed : mousepressedType; keypressed : keypressedType);
+	
+Procedure WindowSetting(Caption : PChar);
+Procedure WindowSetting(Caption : PChar; width,height : Word);
 
 
 Implementation
 
+Var
+	AppStarted : Boolean;
+
 Function TimeMS() : Real;
 Begin 
 	exit(TimeStampToMSecs(DateTimeToTimeStamp(Now)));
+End;
+
+Procedure WindowSetting(Caption : PChar);
+Begin
+	SDL_WM_SetCaption(Caption, nil);
+End;
+
+Procedure WindowSetting(Caption : PChar; width,height : Word);
+Begin
+	SDL_WM_SetCaption(Caption, nil);
+	If(not AppStarted) Then
+	Begin
+		G_SCR_W := width;
+	  G_SCR_H := height;
+	End;
 End;
 
 Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; mousepressed : mousepressedType; keypressed : keypressedType);
@@ -27,6 +48,7 @@ Var
 	delatimer,dt,fpstimer : Real;
 	mousep,keyp : Boolean;
 Begin
+	AppStarted := True;
 	mousep := False;
 	keyp := False;
 	gClear(BLACK);
@@ -72,5 +94,8 @@ Begin
 		End;
 	Until False;
 End;
+
+Initialization
+	AppStarted := False;
 
 End.
