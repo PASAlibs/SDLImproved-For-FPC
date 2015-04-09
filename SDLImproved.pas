@@ -16,8 +16,8 @@ Type
 	loadType = Procedure (); 
 	updateType = Procedure (dt : Real); 
 	drawType = Procedure (fps : Real);
-	mousepressedType = Procedure (left : Boolean ; x,y : real);
-	keypressedType = Procedure (key : Integer);
+	mousepressedType = Procedure (left : Boolean ; x,y : real ; release : Boolean);
+	keypressedType = Procedure (key : Integer ; release : Boolean);
 
 Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; mousepressed : mousepressedType; keypressed : keypressedType);
 	
@@ -53,10 +53,11 @@ End;
 Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; mousepressed : mousepressedType; keypressed : keypressedType);
 Var
 	delatimer,dt,fpstimer : Real;
-	mousep,keyp : Boolean;
+	mousep,mouseLeft,keyp : Boolean;
 Begin
 	AppStarted := True;
 	mousep := False;
+	mouseLeft := False;
 	keyp := False;
 	gClear(BLACK);
 	load;
@@ -72,15 +73,20 @@ Begin
 
 		If(mousep and (sdl_mouse_left_click_released or sdl_mouse_right_click_released)) Then
 		Begin
-			mousepressed(sdl_mouse_left_click_released,sdl_get_mouse_x,sdl_get_mouse_y);
+			mousepressed(sdl_mouse_left_click_released,sdl_get_mouse_x,sdl_get_mouse_y,True);
 			mousep := False;
 		End
+		Else If(mousep) Then
+			mousepressed(mouseLeft,sdl_get_mouse_x,sdl_get_mouse_y,False)
 		Else If(not mousep) Then
+		Begin
 			mousep := (sdl_mouse_left_click or sdl_mouse_right_click);
+			mouseLeft := sdl_mouse_left_click;
+		End;
 
 		If(keyp and (sdl_get_keyreleased <> -1)) Then
 		Begin
-			keypressed(sdl_get_keyreleased);
+			keypressed(sdl_get_keyreleased, True);
 			keyp := False;
 		End
 		Else If(not keyp) Then

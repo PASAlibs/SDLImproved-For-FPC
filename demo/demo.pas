@@ -74,21 +74,30 @@ Begin
 	gDrawCircle(ball.x,ball.y,ball.radius,ball.color);
 End;
 
-Procedure MousePressed(left : Boolean; x,y : real);
+Procedure MousePressed(left : Boolean; x,y : real ; release : Boolean);
 Begin
-	inc(click);
-	Writeln(click);
-	circle.x := x;
-	circle.y := y;
-	If(left) Then
-		circle.color := WHITE
+	If(release) Then
+	Begin
+		inc(click);
+		Writeln(click);
+		circle.x := x;
+		circle.y := y;
+		If(left) Then
+			circle.color := WHITE
+		Else
+			circle.color := RED;
+	End
 	Else
-		circle.color := RED;
+	Begin
+		circle.x := x;
+		circle.y := y;
+		circle.color := GREEN
+	End;
 End;
 
-Procedure KeyPressed(key : Integer);
+Procedure KeyPressed(key : Integer ; release : Boolean);
 Begin
-	Write(chr(key));
+	Writeln((key));
 End;
 
 Begin

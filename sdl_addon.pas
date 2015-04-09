@@ -77,25 +77,25 @@ end;
 
 function sdl_mouse_left_click : boolean;
 begin
-    exit((_event.type_ = SDL_MOUSEBUTTONUP) 
+    exit((_event.type_ = SDL_MOUSEBUTTONDOWN) 
     and  (_event.button.button = SDL_BUTTON_LEFT));
 end;
 
 function sdl_mouse_left_click_released : boolean;
 begin
-    exit((_event.type_ = SDL_MOUSEBUTTONDOWN) 
+    exit((_event.type_ = SDL_MOUSEBUTTONUP) 
     and  (_event.button.button = SDL_BUTTON_LEFT));
 end;
 
 function sdl_mouse_right_click : boolean;
 begin
-    exit((_event.type_ = SDL_MOUSEBUTTONUP) 
+    exit((_event.type_ = SDL_MOUSEBUTTONDOWN) 
     and  (_event.button.button = SDL_BUTTON_RIGHT));
 end;
 
 function sdl_mouse_right_click_released : boolean;
 begin
-    exit((_event.type_ = SDL_MOUSEBUTTONDOWN) 
+    exit((_event.type_ = SDL_MOUSEBUTTONUP) 
     and  (_event.button.button = SDL_BUTTON_RIGHT));
 end;
 
