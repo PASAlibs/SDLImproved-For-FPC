@@ -3,6 +3,10 @@ Program Demo;
 uses crt,sysutils,gLib2D, SDL_TTF, SDL_Addon, SDLImproved;
 
 Type
+	RectType = Record
+			x,y,width,height : real;
+			color : gColor;
+		End;
 	CircleType = Record
 			x,y,radius : real;
 			color : gColor;
@@ -18,6 +22,7 @@ Var
 	circle : CircleType;
 	ball : BallType;
 	click : Word;
+	bottomLeft : RectType;
 
 Procedure Load();
 Begin
@@ -34,9 +39,17 @@ Begin
 	ball.speedX := 550/1000;
 	ball.speedY := 470/1000;
 	ball.color := White;
+
+	bottomLeft.width := 20;
+	bottomLeft.height := 20;
+	bottomLeft.x := G_SCR_W-bottomLeft.width;
+	bottomLeft.y := G_SCR_H-bottomLeft.height;
+	bottomLeft.color := WHITE;
 End;
 
 Procedure Update(dt : Real);
+Var
+	mousexy : Vector2D;
 Begin
 	ball.x := ball.x + dt*ball.speedX*ball.dirX;
 	ball.y := ball.y + dt*ball.speedY*ball.dirY;
@@ -55,14 +68,20 @@ Begin
 		ball.dirX := - ball.dirX;
 	If((ball.y <= ball.radius) or (ball.y >= G_SCR_H-ball.radius)) then
 		ball.dirY := - ball.dirY;
+
+	mousexy := GetMouseXY();
+	If(ABS(circle.x-mousexy.x)*ABS(circle.x-mousexy.x) + ABS(circle.y-mousexy.y)*ABS(circle.y-mousexy.y) < circle.radius*circle.radius) Then
+		bottomLeft.color := GREEN
+	Else
+		bottomLeft.color := WHITE;
 End;
 
 Procedure Draw(fps : Real);
 Var 
 	fpsText : gImage;
+	focusText : gImage;
 Begin
 	fpsText := gTextLoad('FPS : ' + FloatToStr((fps)), font);
-
 	gBeginRects(fpsText);
 		gSetCoordMode(G_UP_LEFT);
 		gSetCoord(0,0);
@@ -70,8 +89,21 @@ Begin
 		gAdd();
 	gEnd();
 
+	If(not IsVisible) Then
+	Begin
+		focusText := gTextLoad('I know you are not looking here !', font);
+		gBeginRects(focusText);
+			gSetCoordMode(G_DOWN_LEFT);
+			gSetCoord(0,G_SCR_H);
+			gSetColor(WHITE);
+			gAdd();
+		gEnd();
+	End;
+
+
 	gDrawCircle(circle.x,circle.y,circle.radius,circle.color);
 	gDrawCircle(ball.x,ball.y,ball.radius,ball.color);
+	gFillRect(bottomLeft.x,bottomLeft.y,bottomLeft.width,bottomLeft.height,bottomLeft.color);
 End;
 
 Procedure MousePressed(left : Boolean; x,y : real ; release : Boolean);
@@ -83,9 +115,9 @@ Begin
 		circle.x := x;
 		circle.y := y;
 		If(left) Then
-			circle.color := BLUE
+			circle.color := WHITE
 		Else
-			circle.color := YELLOW;
+			circle.color := RED;
 	End
 	Else
 	Begin

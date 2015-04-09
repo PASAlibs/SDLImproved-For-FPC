@@ -19,6 +19,10 @@ Type
 	mousepressedType = Procedure (left : Boolean ; x,y : real ; release : Boolean);
 	keypressedType = Procedure (key : Word ; release : Boolean);
 
+	Vector2D = Record
+			x,y : Real;
+		End;
+
 Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; mousepressed : mousepressedType; keypressed : keypressedType);
 Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; mousepressed : mousepressedType);
 	Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; keypressed : keypressedType);
@@ -29,13 +33,16 @@ Procedure WindowSetting(Caption : PChar);
 Procedure WindowSetting(Caption : PChar; width,height : Word);
 
 Function isKeyDown(k : Word) : Boolean;
+Function GetMouseXY() : Vector2D;
+Function IsVisible() : Boolean;
 
 Implementation
 
 Var
 	i : Word;
-	AppStarted : Boolean;
+	AppStarted,focus : Boolean;
 	keymap : array[0..512] of Boolean;
+	mousePosition : Vector2D;
 
 Function TimeMS() : Real;
 Begin 
@@ -77,6 +84,12 @@ Begin
 		Begin
 			update(dt);
 			delatimer := TimeMS;
+		End;
+		focus := (sdl_get_mouse_x <> 0) and (sdl_get_mouse_y <> 0);
+		If(focus) Then
+		Begin
+			mousePosition.x := sdl_get_mouse_x;
+			mousePosition.y := sdl_get_mouse_y;
 		End;
 
 		If(mousep and (sdl_mouse_left_click_released or sdl_mouse_right_click_released)) Then
@@ -155,8 +168,22 @@ Begin
 		exit(False);
 End;
 
+Function GetMouseXY() : Vector2D;
+Begin
+	exit(mousePosition);
+End;
+
+Function IsVisible() : Boolean;
+Begin
+	exit(focus);
+End;
+
 Initialization
 	AppStarted := False;
+	focus := True;
 	For i := 0 to Length(keymap)-1 do
 		keymap[i] := False;
+
+	mousePosition.x := 0;
+	mousePosition.y := 0;
 End.
