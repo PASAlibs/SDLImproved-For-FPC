@@ -83,9 +83,9 @@ Begin
 		circle.x := x;
 		circle.y := y;
 		If(left) Then
-			circle.color := WHITE
+			circle.color := BLUE
 		Else
-			circle.color := RED;
+			circle.color := YELLOW;
 	End
 	Else
 	Begin
@@ -95,9 +95,15 @@ Begin
 	End;
 End;
 
-Procedure KeyPressed(key : Integer ; release : Boolean);
+Procedure KeyPressed(key : Word ; release : Boolean);
 Begin
-	Writeln((key));
+	If(release) Then
+	Begin
+		Write(chr(key));
+		ball.color := WHITE;
+	End
+	Else
+		ball.color := ORANGE;
 End;
 
 Begin
