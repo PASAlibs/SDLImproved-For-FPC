@@ -36,6 +36,9 @@ Function isKeyDown(k : Word) : Boolean;
 Function GetMouseXY() : Vector2D;
 Function IsVisible() : Boolean;
 
+// Shortcuts
+Procedure gDrawText(s : String; font : PTTF_Font; x,y : Real; color : gColor; mode : byte);
+
 Implementation
 
 Var
@@ -176,6 +179,20 @@ End;
 Function IsVisible() : Boolean;
 Begin
 	exit(focus);
+End;
+
+// Shortcuts
+Procedure gDrawText(s : String; font : PTTF_Font; x,y : Real; color : gColor; mode : byte);
+Var
+	text : gImage;
+Begin
+	text := gTextLoad(s, font);
+	gBeginRects(text);
+		gSetCoordMode(mode);
+		gSetCoord(x,y);
+		gSetColor(color);
+		gAdd();
+	gEnd();
 End;
 
 Initialization

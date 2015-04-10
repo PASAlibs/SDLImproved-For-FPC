@@ -77,27 +77,11 @@ Begin
 End;
 
 Procedure Draw(fps : Real);
-Var 
-	fpsText : gImage;
-	focusText : gImage;
 Begin
-	fpsText := gTextLoad('FPS : ' + FloatToStr((fps)), font);
-	gBeginRects(fpsText);
-		gSetCoordMode(G_UP_LEFT);
-		gSetCoord(0,0);
-		gSetColor(WHITE);
-		gAdd();
-	gEnd();
-
+	gDrawText('FPS : ' + FloatToStr((fps)), font,0,0,WHITE,G_UP_LEFT);
 	If(not IsVisible) Then
 	Begin
-		focusText := gTextLoad('I know you are not looking here !', font);
-		gBeginRects(focusText);
-			gSetCoordMode(G_DOWN_LEFT);
-			gSetCoord(0,G_SCR_H);
-			gSetColor(WHITE);
-			gAdd();
-		gEnd();
+		gDrawText('I know you are not looking here !', font,0,0,WHITE,G_UP_LEFT);
 	End;
 
 
