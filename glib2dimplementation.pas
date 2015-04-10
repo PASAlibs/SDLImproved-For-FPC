@@ -1,3 +1,13 @@
+(*
+* gLib2D by Geecko - A simple, fast, light-weight 2D graphics library.
+* 
+* Modified by Guillaume Samuel under the same license.
+* This work is licensed under the Creative Commons 
+* Attribution-ShareAlike 4.0 International License. 
+* To view a copy of this license, 
+* visit http://creativecommons.org/licenses/by-sa/4.0/
+*)
+
 Const
 	TRANSFORM_STACK_MAX = 128;
 	
@@ -889,5 +899,10 @@ start := false;
 scissor := false;
 global_scale := 1.0;
 obj_begin := false;
+
+(* Screen size constants *)
+G_SCR_W := 800;
+G_SCR_H := 600;
+G_VOID  := 0;
 
 (* EOF *)

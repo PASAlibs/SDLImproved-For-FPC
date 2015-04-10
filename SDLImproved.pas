@@ -1,34 +1,79 @@
+{
+* Copyright © 2015 Samuel Guillaume <samuel.guillaumes@eisti.eu> 
+* This work is free. You can redistribute it and/or modify it under the
+* terms of the Do What The Fuck You Want To Public License, Version 2,
+* as published by Sam Hocevar. See the LICENSE file for more details.
+}
+
 {$MODE ObjFPC} 
 Unit SDLImproved;
 
 Interface
 
-uses crt, sysutils, gLib2D, SDL, SDL_TTF, SDL_Addon;
+uses crt, sysutils, gLib2D,GL, SDL, SDL_TTF, SDL_Addon;
 
 Type
-	loadType = procedure (); 
-	updateType = procedure (dt : Real); 
-	drawType = procedure (fps : Real);
-	mousepressedType = procedure (left : Boolean ; x,y : real);
-	keypressedType = Procedure (key : Integer);
+	loadType = Procedure (); 
+	updateType = Procedure (dt : Real); 
+	drawType = Procedure (fps : Real);
+	mousepressedType = Procedure (left : Boolean ; x,y : real ; release : Boolean);
+	keypressedType = Procedure (key : Word ; release : Boolean);
+
+	Vector2D = Record
+			x,y : Real;
+		End;
 
 Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; mousepressed : mousepressedType; keypressed : keypressedType);
+Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; mousepressed : mousepressedType);
+	Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; keypressed : keypressedType);
+Procedure StartApp(load : loadType ; update : updateType ; draw : drawType);
 
+	
+Procedure WindowSetting(Caption : PChar);
+Procedure WindowSetting(Caption : PChar; width,height : Word);
+
+Function isKeyDown(k : Word) : Boolean;
+Function GetMouseXY() : Vector2D;
+Function IsVisible() : Boolean;
 
 Implementation
+
+Var
+	i : Word;
+	AppStarted,focus : Boolean;
+	keymap : array[0..512] of Boolean;
+	mousePosition : Vector2D;
 
 Function TimeMS() : Real;
 Begin 
 	exit(TimeStampToMSecs(DateTimeToTimeStamp(Now)));
 End;
 
+Procedure WindowSetting(Caption : PChar);
+Begin
+	SDL_WM_SetCaption(Caption, nil);
+End;
+
+Procedure WindowSetting(Caption : PChar; width,height : Word);
+Begin
+	SDL_WM_SetCaption(Caption, nil);
+	If(not AppStarted) Then
+	Begin
+		G_SCR_W := width;
+	  G_SCR_H := height;
+	End;
+End;
+
 Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; mousepressed : mousepressedType; keypressed : keypressedType);
 Var
+	k : Integer;
 	delatimer,dt,fpstimer : Real;
-	mousep,keyp : Boolean;
+	mousep,mouseLeft : Boolean;
 Begin
+	AppStarted := True;
 	mousep := False;
-	keyp := False;
+	mouseLeft := False;
+
 	gClear(BLACK);
 	load;
 	delatimer := TimeMS;
@@ -40,22 +85,41 @@ Begin
 			update(dt);
 			delatimer := TimeMS;
 		End;
+		focus := (sdl_get_mouse_x <> 0) and (sdl_get_mouse_y <> 0);
+		If(focus) Then
+		Begin
+			mousePosition.x := sdl_get_mouse_x;
+			mousePosition.y := sdl_get_mouse_y;
+		End;
 
 		If(mousep and (sdl_mouse_left_click_released or sdl_mouse_right_click_released)) Then
 		Begin
-			mousepressed(sdl_mouse_left_click_released,sdl_get_mouse_x,sdl_get_mouse_y);
+			mousepressed(sdl_mouse_left_click_released,sdl_get_mouse_x,sdl_get_mouse_y,True);
 			mousep := False;
 		End
+		Else If(mousep) Then
+			mousepressed(mouseLeft,sdl_get_mouse_x,sdl_get_mouse_y,False)
 		Else If(not mousep) Then
-			mousep := (sdl_mouse_left_click or sdl_mouse_right_click);
-
-		If(keyp and (sdl_get_keyreleased <> -1)) Then
 		Begin
-			keypressed(sdl_get_keyreleased);
-			keyp := False;
-		End
-		Else If(not keyp) Then
-			keyp := (sdl_get_keypressed <> -1);
+			mousep := (sdl_mouse_left_click or sdl_mouse_right_click);
+			mouseLeft := sdl_mouse_left_click;
+		End;
+
+		k := sdl_get_keypressed;
+		If(k <> -1) Then
+			keymap[k] := True;
+
+		k := sdl_get_keyreleased;
+		If(k <> -1) Then
+			If(keymap[k]) Then
+			Begin
+				keypressed(k, True);
+				keymap[k] := False;
+			End;
+
+		For i := 0 to Length(keymap)-1 do
+			If(keymap[i]) Then
+				keypressed(i, False);
 
 		If((TimeMS - fpstimer) > (1000/60)) Then
 		Begin
@@ -73,4 +137,53 @@ Begin
 	Until False;
 End;
 
+Procedure emptykeypressed(key : Word ; release : Boolean);
+Begin
+End;
+
+Procedure emptymousepressed(left : Boolean; x,y : real ; release : Boolean);
+Begin
+End;
+
+Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; mousepressed : mousepressedType);
+Begin
+	StartApp(load,update,draw,mousepressed,@emptykeypressed);
+End;
+
+Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; keypressed : keypressedType);
+Begin
+	StartApp(load,update,draw,@emptymousepressed,keypressed);
+End;
+
+Procedure StartApp(load : loadType ; update : updateType ; draw : drawType );
+Begin
+	StartApp(load,update,draw,@emptymousepressed,@emptykeypressed);
+End;
+
+Function isKeyDown(k : Word) : Boolean;
+Begin
+	If(k < Length(keymap)) Then
+		exit(keymap[k])
+	Else
+		exit(False);
+End;
+
+Function GetMouseXY() : Vector2D;
+Begin
+	exit(mousePosition);
+End;
+
+Function IsVisible() : Boolean;
+Begin
+	exit(focus);
+End;
+
+Initialization
+	AppStarted := False;
+	focus := True;
+	For i := 0 to Length(keymap)-1 do
+		keymap[i] := False;
+
+	mousePosition.x := 0;
+	mousePosition.y := 0;
 End.
