@@ -84,15 +84,15 @@ Begin
 		gDrawText('I know you are not looking here !', font,0,G_SCR_H,WHITE,G_DOWN_LEFT);
 	End;
 
+ 	gDrawPoint(100,100,GREEN);
+	gDrawTriangle(100,100,150,100,140,140,GREEN);
+	gFillTriangle(200,200,350,200,200,350,SPRING_GREEN);
+	gDrawLine(500,500,600,500,YELLOW);
 
 	gDrawCircle(circle.x,circle.y,circle.radius,circle.color);
 	gDrawCircle(ball.x,ball.y,ball.radius,ball.color);
 	gFillRect(bottomLeft.x,bottomLeft.y,bottomLeft.width,bottomLeft.height,bottomLeft.color);
 
- 	gDrawPoint(100,100,GREEN);
-	gDrawTriangle(100,100,150,100,140,140,GREEN);
-	gFillTriangle(200,200,350,200,200,350,Red);
-	gDrawLine(500,500,600,500,YELLOW);
 End;
 
 Procedure MousePressed(left : Boolean; x,y : real ; release : Boolean);

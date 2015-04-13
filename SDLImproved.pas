@@ -242,7 +242,6 @@ Begin
 	i := 0.1;
 	centerX := (x1 + x2 + x3)/3;
 	centerY := (y1 + y2 + y3)/3;
-	//gDrawPoint(centerX,centerY,color);
 	Repeat
 		gDrawTriangle(x1,y1,x2,y2,x3,y3,color);
 		If(x1 > centerX) Then x1 := x1 - i
