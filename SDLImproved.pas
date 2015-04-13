@@ -41,6 +41,7 @@ Procedure gDrawText(s : String; font : PTTF_Font; x,y : Real; color : gColor; mo
 Procedure gDrawPoint(x,y : Real; color : gColor);
 Procedure gDrawLine(x1,y1,x2,y2 : Real; color : gColor);
 Procedure gDrawTriangle(x1,y1,x2,y2,x3,y3 : Real; color : gColor);
+Procedure gFillTriangle(x1,y1,x2,y2,x3,y3 : Real; color : gColor);
 
 
 Implementation
@@ -232,6 +233,32 @@ Begin
 		gSetCoord(x1, y1);
 		gAdd();
 	gEnd();
+End;
+
+Procedure gFillTriangle(x1,y1,x2,y2,x3,y3 : Real; color : gColor);
+Var
+	centerX,centerY,i : Real;
+Begin
+	i := 0.1;
+	centerX := (x1 + x2 + x3)/3;
+	centerY := (y1 + y2 + y3)/3;
+	//gDrawPoint(centerX,centerY,color);
+	Repeat
+		gDrawTriangle(x1,y1,x2,y2,x3,y3,color);
+		If(x1 > centerX) Then x1 := x1 - i
+		Else x1 := x1 + i;
+		If(x2 > centerX) Then x2 := x2 - i
+		Else x2 := x2 + i;
+		If(x3 > centerX) Then x3 := x3 - i
+		Else x3 := x3 + i;
+
+		If(y1 > centerY) Then y1 := y1 - i
+		Else y1 := y1 + i;
+		If(y2 > centerY) Then y2 := y2 - i
+		Else y2 := y2 + i;
+		If(y3 > centerY) Then y3 := y3 - i
+		Else y3 := y3 + i;
+	Until ((ABS(x1-centerX) < i) and ((ABS(x2-centerX) < i)) and (ABS(x3-centerX) < i)) and ((ABS(y1-centerY) < i) and ((ABS(y2-centerY) < i)) and (ABS(y3-centerY) < i));
 End;
 
 Initialization

@@ -90,8 +90,8 @@ Begin
 	gFillRect(bottomLeft.x,bottomLeft.y,bottomLeft.width,bottomLeft.height,bottomLeft.color);
 
  	gDrawPoint(100,100,GREEN);
-
 	gDrawTriangle(100,100,150,100,140,140,GREEN);
+	gFillTriangle(200,200,350,200,200,350,Red);
 	gDrawLine(500,500,600,500,YELLOW);
 End;
 
