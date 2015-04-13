@@ -61,15 +61,15 @@ Const
     G_CENTER        = 4;
     
     (* Enable line strip, in gBeginLines(G_STRIP); *)
+    G_VOID          = 0;
     G_STRIP         = 1;
     
     PI              = 3.141592653589;
 
 Var
-    (* Screen size constants *)
+(* Screen size constants *)
     G_SCR_W : Word;
     G_SCR_H : Word;
-    G_VOID : Word;
 
 (* Functions prototypes *)
 
@@ -507,7 +507,7 @@ procedure gResetScissor;
 procedure gSetScissor(x, y, w, h : integer);
 
 
-(* Procedures pour les tapettes :D
+(*
     gBlit(x, y, image, w, h);
     * Blit an image (calls gBeginRects, gSetCoord, gSetScale, gAdd, gEnd)
     

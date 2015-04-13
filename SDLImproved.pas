@@ -38,6 +38,10 @@ Function IsVisible() : Boolean;
 
 // Shortcuts
 Procedure gDrawText(s : String; font : PTTF_Font; x,y : Real; color : gColor; mode : byte);
+Procedure gDrawPoint(x,y : Real; color : gColor);
+Procedure gDrawLine(x1,y1,x2,y2 : Real; color : gColor);
+Procedure gDrawTriangle(x1,y1,x2,y2,x3,y3 : Real; color : gColor);
+
 
 Implementation
 
@@ -191,6 +195,41 @@ Begin
 		gSetCoordMode(mode);
 		gSetCoord(x,y);
 		gSetColor(color);
+		gAdd();
+	gEnd();
+End;
+
+Procedure gDrawPoint(x,y : Real; color : gColor);
+Begin
+ 	gBeginPoints();
+ 		gSetColor(color);
+		gSetCoord(x,y);
+		gAdd();
+	gEnd;
+End;
+
+Procedure gDrawLine(x1,y1,x2,y2 : Real; color : gColor);
+Begin
+	gBeginLines(G_STRIP);
+		gSetColor(color);
+		gSetCoord(x1, y1);
+		gAdd();
+		gSetCoord(x2, y2);
+		gAdd();
+	gEnd();
+End;
+
+Procedure gDrawTriangle(x1,y1,x2,y2,x3,y3 : Real; color : gColor);
+Begin
+	gBeginLines(G_STRIP);
+		gSetColor(color);
+		gSetCoord(x1, y1);
+		gAdd();
+		gSetCoord(x2, y2);
+		gAdd();
+		gSetCoord(x3, y3);
+		gAdd();
+		gSetCoord(x1, y1);
 		gAdd();
 	gEnd();
 End;

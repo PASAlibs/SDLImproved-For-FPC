@@ -30,7 +30,7 @@ Begin
 	
 	click := 0;
 	font := TTF_OpenFont('CodeNewRoman.ttf', 20);
-	circle.x := 0 ; circle.y := 0 ; circle.radius := 50; circle.color := WHITE;
+	circle.x := G_SCR_W/2 ; circle.y := G_SCR_H/2 ; circle.radius := 50; circle.color := WHITE;
 	ball.x := G_SCR_W/2;
 	ball.y := G_SCR_H/2;
 	ball.dirX := 1;
@@ -81,13 +81,18 @@ Begin
 	gDrawText('FPS : ' + FloatToStr((fps)), font,0,0,WHITE,G_UP_LEFT);
 	If(not IsVisible) Then
 	Begin
-		gDrawText('I know you are not looking here !', font,0,0,WHITE,G_UP_LEFT);
+		gDrawText('I know you are not looking here !', font,0,G_SCR_H,WHITE,G_DOWN_LEFT);
 	End;
 
 
 	gDrawCircle(circle.x,circle.y,circle.radius,circle.color);
 	gDrawCircle(ball.x,ball.y,ball.radius,ball.color);
 	gFillRect(bottomLeft.x,bottomLeft.y,bottomLeft.width,bottomLeft.height,bottomLeft.color);
+
+ 	gDrawPoint(100,100,GREEN);
+
+	gDrawTriangle(100,100,150,100,140,140,GREEN);
+	gDrawLine(500,500,600,500,YELLOW);
 End;
 
 Procedure MousePressed(left : Boolean; x,y : real ; release : Boolean);
