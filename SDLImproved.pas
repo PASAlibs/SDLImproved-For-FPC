@@ -19,9 +19,11 @@ Type
 	mousepressedType = Procedure (left : Boolean ; x,y : real ; release : Boolean);
 	keypressedType = Procedure (key : Word ; release : Boolean);
 
-	Vector2D = Record
+	Point = Record
 			x,y : Real;
 		End;
+
+	Vertices = Array of Point;
 
 Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; mousepressed : mousepressedType; keypressed : keypressedType);
 Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; mousepressed : mousepressedType);
@@ -33,7 +35,7 @@ Procedure WindowSetting(Caption : PChar);
 Procedure WindowSetting(Caption : PChar; width,height : Word);
 
 Function isKeyDown(k : Word) : Boolean;
-Function GetMouseXY() : Vector2D;
+Function GetMouseXY() : Point;
 Function IsVisible() : Boolean;
 
 // Shortcuts
@@ -42,6 +44,7 @@ Procedure gDrawPoint(x,y : Real; color : gColor);
 Procedure gDrawLine(x1,y1,x2,y2 : Real; color : gColor);
 Procedure gDrawTriangle(x1,y1,x2,y2,x3,y3 : Real; color : gColor);
 Procedure gFillTriangle(x1,y1,x2,y2,x3,y3 : Real; color : gColor);
+Procedure gDrawPoly(points : Vertices; color : gColor);
 
 
 Implementation
@@ -50,7 +53,7 @@ Var
 	i : Word;
 	AppStarted,focus : Boolean;
 	keymap : array[0..512] of Boolean;
-	mousePosition : Vector2D;
+	mousePosition : Point;
 
 Function TimeMS() : Real;
 Begin 
@@ -176,7 +179,7 @@ Begin
 		exit(False);
 End;
 
-Function GetMouseXY() : Vector2D;
+Function GetMouseXY() : Point;
 Begin
 	exit(mousePosition);
 End;
@@ -284,6 +287,15 @@ Begin
 		If(y3 > centerY + i) Then y3 := y3 - iy3
 		Else If(y3 < centerY - i) Then y3 := y3 + iy3;
 	Until ((ABS(x1-centerX) < i) and ((ABS(x2-centerX) < i)) and (ABS(x3-centerX) < i)) and ((ABS(y1-centerY) < i) and ((ABS(y2-centerY) < i)) and (ABS(y3-centerY) < i));
+End;
+
+Procedure gDrawPoly(points : Vertices; color : gColor);
+Var
+	i : Word;
+Begin
+	For i := 0 to Length(points)-2 do
+		gDrawLine(points[i].x,points[i].y,points[i+1].x,points[i+1].y,color);
+	gDrawLine(points[Length(points)-1].x,points[Length(points)-1].y,points[0].x,points[0].y,color);
 End;
 
 Initialization

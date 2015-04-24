@@ -23,6 +23,7 @@ Var
 	ball : BallType;
 	click : Word;
 	bottomLeft : RectType;
+	poly : Vertices;
 
 Procedure Load();
 Begin
@@ -45,11 +46,21 @@ Begin
 	bottomLeft.x := G_SCR_W-bottomLeft.width;
 	bottomLeft.y := G_SCR_H-bottomLeft.height;
 	bottomLeft.color := WHITE;
+
+	SetLength(poly,4);
+	poly[0].x := 100;
+	poly[0].y := 400;
+	poly[1].x := 200;
+	poly[1].y := 500;
+	poly[2].x := 100;
+	poly[2].y := 500;
+	poly[3].x := 50;
+	poly[3].y := 450;
 End;
 
 Procedure Update(dt : Real);
 Var
-	mousexy : Vector2D;
+	mousexy : Point;
 Begin
 	ball.x := ball.x + dt*ball.speedX*ball.dirX;
 	ball.y := ball.y + dt*ball.speedY*ball.dirY;
@@ -86,14 +97,15 @@ Begin
 
  	gDrawPoint(100,100,GREEN);
 	gDrawTriangle(100,100,150,100,140,140,GREEN);
-	gFillTriangle(200,200,350,200,220,370,SPRING_GREEN);
-	gDrawTriangle(200,200,350,200,220,370,RED);
+	gFillTriangle(200,200,450,200,220,371,SPRING_GREEN);
+	gDrawTriangle(200,200,450,200,220,371,RED);
 	gDrawLine(500,500,600,500,YELLOW);
 
 	gDrawCircle(circle.x,circle.y,circle.radius,circle.color);
 	gDrawCircle(ball.x,ball.y,ball.radius,ball.color);
 	gFillRect(bottomLeft.x,bottomLeft.y,bottomLeft.width,bottomLeft.height,bottomLeft.color);
 
+	gDrawPoly(poly,WHITE);
 End;
 
 Procedure MousePressed(left : Boolean; x,y : real ; release : Boolean);
