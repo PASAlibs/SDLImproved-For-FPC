@@ -45,6 +45,7 @@ Procedure gDrawLine(x1,y1,x2,y2 : Real; color : gColor);
 Procedure gDrawTriangle(x1,y1,x2,y2,x3,y3 : Real; color : gColor);
 Procedure gFillTriangle(x1,y1,x2,y2,x3,y3 : Real; color : gColor);
 Procedure gDrawPoly(points : Vertices; color : gColor);
+Procedure gFillPoly(v : Vertices; color : gColor);
 
 
 Implementation
@@ -296,6 +297,57 @@ Begin
 	For i := 0 to Length(points)-2 do
 		gDrawLine(points[i].x,points[i].y,points[i+1].x,points[i+1].y,color);
 	gDrawLine(points[Length(points)-1].x,points[Length(points)-1].y,points[0].x,points[0].y,color);
+End;
+
+Procedure gFillPoly(v : Vertices; color : gColor);
+Var
+	i,j,steps : Word;
+	center : point;
+	points : Vertices;
+	delta : array of point;
+Begin
+	SetLength(points, Length(v));
+
+	center.x := 0;
+	center.y := 0;
+	For i := 0 to Length(points)-1 do
+	Begin
+		points[i].x := v[i].x;
+		points[i].y := v[i].y;
+		center.x := center.x + points[i].x;
+		center.y := center.y + points[i].y;
+	End;
+	center.x := center.x / Length(points);
+	center.y := center.y / Length(points);
+	steps := 0;
+	For i := 0 to Length(points)-1 do
+	Begin
+		If(ABS(points[i].x - center.x) > steps) Then 
+			steps := Floor(ABS(points[i].x - center.x));
+		If(ABS(points[i].y - center.y) > steps) Then 
+			steps := Floor(ABS(points[i].y - center.y));
+	End;
+
+	SetLength(delta,Length(points));
+	For i := 0 to Length(points)-1 do
+	Begin
+		delta[i].x := (center.x-points[i].x)/steps;
+		delta[i].y := (center.y-points[i].y)/steps;
+	End;
+
+	gDrawPoly(points,color);
+	For i := 0 to steps - 2 do
+	Begin
+		For j := 0 to Length(points)-1 do
+		Begin
+			If(ABS(center.x - points[j].x) > (delta[j].x*1.2)) Then
+				points[j].x := points[j].x + delta[j].x;
+
+			If(ABS(center.y - points[j].y) > (delta[j].y*1.2)) Then
+				points[j].y := points[j].y + delta[j].y;
+		End;
+		gDrawPoly(points,color);
+	End;
 End;
 
 Initialization

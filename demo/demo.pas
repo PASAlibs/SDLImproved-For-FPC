@@ -105,7 +105,8 @@ Begin
 	gDrawCircle(ball.x,ball.y,ball.radius,ball.color);
 	gFillRect(bottomLeft.x,bottomLeft.y,bottomLeft.width,bottomLeft.height,bottomLeft.color);
 
-	gDrawPoly(poly,WHITE);
+	gFillPoly(poly,WHITE);
+	gDrawPoly(poly,RED);
 End;
 
 Procedure MousePressed(left : Boolean; x,y : real ; release : Boolean);
