@@ -46,6 +46,9 @@ Procedure gDrawTriangle(x1,y1,x2,y2,x3,y3 : Real; color : gColor);
 Procedure gFillTriangle(x1,y1,x2,y2,x3,y3 : Real; color : gColor);
 Procedure gDrawPoly(points : Vertices; color : gColor);
 Procedure gFillPoly(v : Vertices; color : gColor);
+Procedure gDrawImage(img : gImage; x,y : Real; mode : byte; scaleX,scaleY : Real);
+Procedure gDrawImage(img : gImage; x,y : Real; mode : byte; scale : Real);
+Procedure gDrawImage(img : gImage; x,y : Real; mode : byte);
 
 
 Implementation
@@ -314,11 +317,11 @@ Begin
 	Begin
 		points[i].x := v[i].x;
 		points[i].y := v[i].y;
-		center.x := center.x + points[i].x;
-		center.y := center.y + points[i].y;
+		center.x += points[i].x;
+		center.y += points[i].y;
 	End;
-	center.x := center.x / Length(points);
-	center.y := center.y / Length(points);
+	center.x /= Length(points);
+	center.y /=  Length(points);
 	steps := 0;
 	For i := 0 to Length(points)-1 do
 	Begin
@@ -341,14 +344,35 @@ Begin
 		For j := 0 to Length(points)-1 do
 		Begin
 			If(ABS(center.x - points[j].x) > (delta[j].x*1.2)) Then
-				points[j].x := points[j].x + delta[j].x;
+				points[j].x += delta[j].x;
 
 			If(ABS(center.y - points[j].y) > (delta[j].y*1.2)) Then
-				points[j].y := points[j].y + delta[j].y;
+				points[j].y += delta[j].y;
 		End;
 		gDrawPoly(points,color);
 	End;
 End;
+
+Procedure gDrawImage(img : gImage; x,y : Real; mode : byte; scaleX,scaleY : Real);
+begin
+	gBeginRects(img);
+	  gSetScaleWH(scaleX, scaleY);
+		gSetCoordMode(mode);
+		gSetCoord(x, y);
+		gAdd();
+	gEnd();
+end;
+
+Procedure gDrawImage(img : gImage; x,y : Real; mode : byte; scale : Real);
+Begin
+	gDrawImage(img,x,y,mode,scale,img^.h*scale);
+End;
+
+Procedure gDrawImage(img : gImage; x,y : Real; mode : byte);
+Begin
+	gDrawImage(img,x,y,mode,img^.w,img^.h);
+End;
+
 
 Initialization
 	AppStarted := False;

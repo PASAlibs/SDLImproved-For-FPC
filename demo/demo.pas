@@ -24,6 +24,7 @@ Var
 	click : Word;
 	bottomLeft : RectType;
 	poly : Vertices;
+	pic : gImage;
 
 Procedure Load();
 Begin
@@ -56,6 +57,8 @@ Begin
 	poly[2].y := 500;
 	poly[3].x := 50;
 	poly[3].y := 450;
+
+	pic := gTexLoad('Sdl-logo.png');
 End;
 
 Procedure Update(dt : Real);
@@ -90,6 +93,7 @@ End;
 Procedure Draw(fps : Real);
 Begin
 	gDrawText('FPS : ' + FloatToStr((fps)), font,0,0,WHITE,G_UP_LEFT);
+	gDrawImage(pic,500,0,G_UP_LEFT,0.5);
 	If(not IsVisible) Then
 	Begin
 		gDrawText('I know you are not looking here !', font,0,G_SCR_H,WHITE,G_DOWN_LEFT);
@@ -100,13 +104,13 @@ Begin
 	gFillTriangle(200,200,450,200,220,371,SPRING_GREEN);
 	gDrawTriangle(200,200,450,200,220,371,RED);
 	gDrawLine(500,500,600,500,YELLOW);
+	gFillPoly(poly,WHITE);
+	gDrawPoly(poly,RED);
 
 	gDrawCircle(circle.x,circle.y,circle.radius,circle.color);
 	gDrawCircle(ball.x,ball.y,ball.radius,ball.color);
 	gFillRect(bottomLeft.x,bottomLeft.y,bottomLeft.width,bottomLeft.height,bottomLeft.color);
 
-	gFillPoly(poly,WHITE);
-	gDrawPoly(poly,RED);
 End;
 
 Procedure MousePressed(left : Boolean; x,y : real ; release : Boolean);
