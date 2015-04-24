@@ -903,6 +903,5 @@ obj_begin := false;
 (* Screen size constants *)
 G_SCR_W := 800;
 G_SCR_H := 600;
-G_VOID  := 0;
 
 (* EOF *)

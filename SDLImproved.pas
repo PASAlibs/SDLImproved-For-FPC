@@ -10,7 +10,7 @@ Unit SDLImproved;
 
 Interface
 
-uses crt, sysutils, gLib2D,GL, SDL, SDL_TTF, SDL_Addon;
+uses crt,math, sysutils, gLib2D,GL, SDL, SDL_TTF, SDL_Addon;
 
 Type
 	loadType = Procedure (); 
@@ -19,9 +19,11 @@ Type
 	mousepressedType = Procedure (left : Boolean ; x,y : real ; release : Boolean);
 	keypressedType = Procedure (key : Word ; release : Boolean);
 
-	Vector2D = Record
+	Point = Record
 			x,y : Real;
 		End;
+
+	Vertices = Array of Point;
 
 Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; mousepressed : mousepressedType; keypressed : keypressedType);
 Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; mousepressed : mousepressedType);
@@ -33,8 +35,21 @@ Procedure WindowSetting(Caption : PChar);
 Procedure WindowSetting(Caption : PChar; width,height : Word);
 
 Function isKeyDown(k : Word) : Boolean;
-Function GetMouseXY() : Vector2D;
+Function GetMouseXY() : Point;
 Function IsVisible() : Boolean;
+
+// Shortcuts
+Procedure gDrawText(s : String; font : PTTF_Font; x,y : Real; color : gColor; mode : byte);
+Procedure gDrawPoint(x,y : Real; color : gColor);
+Procedure gDrawLine(x1,y1,x2,y2 : Real; color : gColor);
+Procedure gDrawTriangle(x1,y1,x2,y2,x3,y3 : Real; color : gColor);
+Procedure gFillTriangle(x1,y1,x2,y2,x3,y3 : Real; color : gColor);
+Procedure gDrawPoly(points : Vertices; color : gColor);
+Procedure gFillPoly(v : Vertices; color : gColor);
+Procedure gDrawImage(img : gImage; x,y : Real; mode : byte; scaleX,scaleY : Real);
+Procedure gDrawImage(img : gImage; x,y : Real; mode : byte; scale : Real);
+Procedure gDrawImage(img : gImage; x,y : Real; mode : byte);
+
 
 Implementation
 
@@ -42,7 +57,7 @@ Var
 	i : Word;
 	AppStarted,focus : Boolean;
 	keymap : array[0..512] of Boolean;
-	mousePosition : Vector2D;
+	mousePosition : Point;
 
 Function TimeMS() : Real;
 Begin 
@@ -168,7 +183,7 @@ Begin
 		exit(False);
 End;
 
-Function GetMouseXY() : Vector2D;
+Function GetMouseXY() : Point;
 Begin
 	exit(mousePosition);
 End;
@@ -177,6 +192,187 @@ Function IsVisible() : Boolean;
 Begin
 	exit(focus);
 End;
+
+// Shortcuts
+Procedure gDrawText(s : String; font : PTTF_Font; x,y : Real; color : gColor; mode : byte);
+Var
+	text : gImage;
+Begin
+	text := gTextLoad(s, font);
+	gBeginRects(text);
+		gSetCoordMode(mode);
+		gSetCoord(x,y);
+		gSetColor(color);
+		gAdd();
+	gEnd();
+End;
+
+Procedure gDrawPoint(x,y : Real; color : gColor);
+Begin
+ 	gBeginPoints();
+ 		gSetColor(color);
+		gSetCoord(x,y);
+		gAdd();
+	gEnd;
+End;
+
+Procedure gDrawLine(x1,y1,x2,y2 : Real; color : gColor);
+Begin
+	gBeginLines(G_STRIP);
+		gSetColor(color);
+		gSetCoord(x1, y1);
+		gAdd();
+		gSetCoord(x2, y2);
+		gAdd();
+	gEnd();
+End;
+
+Procedure gDrawTriangle(x1,y1,x2,y2,x3,y3 : Real; color : gColor);
+Begin
+	gBeginLines(G_STRIP);
+		gSetColor(color);
+		gSetCoord(x1, y1);
+		gAdd();
+		gSetCoord(x2, y2);
+		gAdd();
+		gSetCoord(x3, y3);
+		gAdd();
+		gSetCoord(x1, y1);
+		gAdd();
+	gEnd();
+End;
+
+Procedure gFillTriangle(x1,y1,x2,y2,x3,y3 : Real; color : gColor);
+Var
+	centerX,centerY,i,ix1,ix2,ix3,iy1,iy2,iy3 : Real;
+	j : byte;
+	steps : Word;
+	dists : array[0..5] of Word;
+Begin
+	i := 0.1;
+	centerX := (x1 + x2 + x3)/3;
+	centerY := (y1 + y2 + y3)/3;
+
+	dists[0] := Floor(ABS(x1-centerX));
+	dists[1] := Floor(ABS(x2-centerX));
+	dists[2] := Floor(ABS(x3-centerX));
+	dists[3] := Floor(ABS(y1-centerY));
+	dists[4] := Floor(ABS(y2-centerY));
+	dists[5] := Floor(ABS(y3-centerY));
+	
+	steps := 1;
+	For j := 0 to 5 do
+	Begin
+		If(steps < dists[j]) Then
+			steps := dists[j];
+	End;
+
+	ix1 := ABS(x1-centerX)/steps;
+	ix2 := ABS(x2-centerX)/steps;
+	ix3 := ABS(x3-centerX)/steps;
+
+	iy1 := ABS(y1-centerY)/steps;
+	iy2 := ABS(y2-centerY)/steps;
+	iy3 := ABS(y3-centerY)/steps;
+
+	Repeat
+		gDrawTriangle(x1,y1,x2,y2,x3,y3,color);
+		If(x1 > centerX + i) Then x1 := x1 - ix1
+		Else If(x1 < centerX - i) Then x1 := x1 + ix1;
+		If(x2 > centerX + i) Then x2 := x2 - ix2
+		Else If(x2 < centerX - i) Then x2 := x2 + ix2;
+		If(x3 > centerX + i) Then x3 := x3 - ix3
+		Else If(x3 < centerX - i) Then x3 := x3 + ix3;
+
+		If(y1 > centerY + i) Then y1 := y1 - iy1
+		Else If(y1 < centerY - i) Then y1 := y1 + iy1;
+		If(y2 > centerY + i) Then y2 := y2 - iy2
+		Else If(y2 < centerY - i) Then y2 := y2 + iy2;
+		If(y3 > centerY + i) Then y3 := y3 - iy3
+		Else If(y3 < centerY - i) Then y3 := y3 + iy3;
+	Until ((ABS(x1-centerX) < i) and ((ABS(x2-centerX) < i)) and (ABS(x3-centerX) < i)) and ((ABS(y1-centerY) < i) and ((ABS(y2-centerY) < i)) and (ABS(y3-centerY) < i));
+End;
+
+Procedure gDrawPoly(points : Vertices; color : gColor);
+Var
+	i : Word;
+Begin
+	For i := 0 to Length(points)-2 do
+		gDrawLine(points[i].x,points[i].y,points[i+1].x,points[i+1].y,color);
+	gDrawLine(points[Length(points)-1].x,points[Length(points)-1].y,points[0].x,points[0].y,color);
+End;
+
+Procedure gFillPoly(v : Vertices; color : gColor);
+Var
+	i,j,steps : Word;
+	center : point;
+	points : Vertices;
+	delta : array of point;
+Begin
+	SetLength(points, Length(v));
+
+	center.x := 0;
+	center.y := 0;
+	For i := 0 to Length(points)-1 do
+	Begin
+		points[i].x := v[i].x;
+		points[i].y := v[i].y;
+		center.x += points[i].x;
+		center.y += points[i].y;
+	End;
+	center.x /= Length(points);
+	center.y /=  Length(points);
+	steps := 0;
+	For i := 0 to Length(points)-1 do
+	Begin
+		If(ABS(points[i].x - center.x) > steps) Then 
+			steps := Floor(ABS(points[i].x - center.x));
+		If(ABS(points[i].y - center.y) > steps) Then 
+			steps := Floor(ABS(points[i].y - center.y));
+	End;
+
+	SetLength(delta,Length(points));
+	For i := 0 to Length(points)-1 do
+	Begin
+		delta[i].x := (center.x-points[i].x)/steps;
+		delta[i].y := (center.y-points[i].y)/steps;
+	End;
+
+	gDrawPoly(points,color);
+	For i := 0 to steps - 2 do
+	Begin
+		For j := 0 to Length(points)-1 do
+		Begin
+			If(ABS(center.x - points[j].x) > (delta[j].x*1.2)) Then
+				points[j].x += delta[j].x;
+
+			If(ABS(center.y - points[j].y) > (delta[j].y*1.2)) Then
+				points[j].y += delta[j].y;
+		End;
+		gDrawPoly(points,color);
+	End;
+End;
+
+Procedure gDrawImage(img : gImage; x,y : Real; mode : byte; scaleX,scaleY : Real);
+begin
+	gBeginRects(img);
+	  gSetScaleWH(scaleX, scaleY);
+		gSetCoordMode(mode);
+		gSetCoord(x, y);
+		gAdd();
+	gEnd();
+end;
+
+Procedure gDrawImage(img : gImage; x,y : Real; mode : byte; scale : Real);
+Begin
+	gDrawImage(img,x,y,mode,scale,img^.h*scale);
+End;
+
+Procedure gDrawImage(img : gImage; x,y : Real; mode : byte);
+Begin
+	gDrawImage(img,x,y,mode,img^.w,img^.h);
+End;
+
 
 Initialization
 	AppStarted := False;

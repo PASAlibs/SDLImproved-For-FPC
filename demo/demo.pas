@@ -23,6 +23,8 @@ Var
 	ball : BallType;
 	click : Word;
 	bottomLeft : RectType;
+	poly : Vertices;
+	pic : gImage;
 
 Procedure Load();
 Begin
@@ -30,7 +32,7 @@ Begin
 	
 	click := 0;
 	font := TTF_OpenFont('CodeNewRoman.ttf', 20);
-	circle.x := 0 ; circle.y := 0 ; circle.radius := 50; circle.color := WHITE;
+	circle.x := G_SCR_W/2 ; circle.y := G_SCR_H/2 ; circle.radius := 50; circle.color := WHITE;
 	ball.x := G_SCR_W/2;
 	ball.y := G_SCR_H/2;
 	ball.dirX := 1;
@@ -45,11 +47,23 @@ Begin
 	bottomLeft.x := G_SCR_W-bottomLeft.width;
 	bottomLeft.y := G_SCR_H-bottomLeft.height;
 	bottomLeft.color := WHITE;
+
+	SetLength(poly,4);
+	poly[0].x := 100;
+	poly[0].y := 400;
+	poly[1].x := 200;
+	poly[1].y := 500;
+	poly[2].x := 100;
+	poly[2].y := 500;
+	poly[3].x := 50;
+	poly[3].y := 450;
+
+	pic := gTexLoad('Sdl-logo.png');
 End;
 
 Procedure Update(dt : Real);
 Var
-	mousexy : Vector2D;
+	mousexy : Point;
 Begin
 	ball.x := ball.x + dt*ball.speedX*ball.dirX;
 	ball.y := ball.y + dt*ball.speedY*ball.dirY;
@@ -77,33 +91,26 @@ Begin
 End;
 
 Procedure Draw(fps : Real);
-Var 
-	fpsText : gImage;
-	focusText : gImage;
 Begin
-	fpsText := gTextLoad('FPS : ' + FloatToStr((fps)), font);
-	gBeginRects(fpsText);
-		gSetCoordMode(G_UP_LEFT);
-		gSetCoord(0,0);
-		gSetColor(WHITE);
-		gAdd();
-	gEnd();
-
+	gDrawText('FPS : ' + FloatToStr((fps)), font,0,0,WHITE,G_UP_LEFT);
+	gDrawImage(pic,500,0,G_UP_LEFT,0.5);
 	If(not IsVisible) Then
 	Begin
-		focusText := gTextLoad('I know you are not looking here !', font);
-		gBeginRects(focusText);
-			gSetCoordMode(G_DOWN_LEFT);
-			gSetCoord(0,G_SCR_H);
-			gSetColor(WHITE);
-			gAdd();
-		gEnd();
+		gDrawText('I know you are not looking here !', font,0,G_SCR_H,WHITE,G_DOWN_LEFT);
 	End;
 
+ 	gDrawPoint(100,100,GREEN);
+	gDrawTriangle(100,100,150,100,140,140,GREEN);
+	gFillTriangle(200,200,450,200,220,371,SPRING_GREEN);
+	gDrawTriangle(200,200,450,200,220,371,RED);
+	gDrawLine(500,500,600,500,YELLOW);
+	gFillPoly(poly,WHITE);
+	gDrawPoly(poly,RED);
 
 	gDrawCircle(circle.x,circle.y,circle.radius,circle.color);
 	gDrawCircle(ball.x,ball.y,ball.radius,ball.color);
 	gFillRect(bottomLeft.x,bottomLeft.y,bottomLeft.width,bottomLeft.height,bottomLeft.color);
+
 End;
 
 Procedure MousePressed(left : Boolean; x,y : real ; release : Boolean);
