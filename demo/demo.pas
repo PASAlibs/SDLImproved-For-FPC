@@ -86,7 +86,8 @@ Begin
 
  	gDrawPoint(100,100,GREEN);
 	gDrawTriangle(100,100,150,100,140,140,GREEN);
-	gFillTriangle(200,200,350,200,200,350,SPRING_GREEN);
+	gFillTriangle(200,200,350,200,220,370,SPRING_GREEN);
+	gDrawTriangle(200,200,350,200,220,370,RED);
 	gDrawLine(500,500,600,500,YELLOW);
 
 	gDrawCircle(circle.x,circle.y,circle.radius,circle.color);

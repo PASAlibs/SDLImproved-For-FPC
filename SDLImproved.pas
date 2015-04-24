@@ -10,7 +10,7 @@ Unit SDLImproved;
 
 Interface
 
-uses crt, sysutils, gLib2D,GL, SDL, SDL_TTF, SDL_Addon;
+uses crt,math, sysutils, gLib2D,GL, SDL, SDL_TTF, SDL_Addon;
 
 Type
 	loadType = Procedure (); 
@@ -237,26 +237,52 @@ End;
 
 Procedure gFillTriangle(x1,y1,x2,y2,x3,y3 : Real; color : gColor);
 Var
-	centerX,centerY,i : Real;
+	centerX,centerY,i,ix1,ix2,ix3,iy1,iy2,iy3 : Real;
+	j : byte;
+	steps : Word;
+	dists : array[0..5] of Word;
 Begin
 	i := 0.1;
 	centerX := (x1 + x2 + x3)/3;
 	centerY := (y1 + y2 + y3)/3;
+
+	dists[0] := Floor(ABS(x1-centerX));
+	dists[1] := Floor(ABS(x2-centerX));
+	dists[2] := Floor(ABS(x3-centerX));
+	dists[3] := Floor(ABS(y1-centerY));
+	dists[4] := Floor(ABS(y2-centerY));
+	dists[5] := Floor(ABS(y3-centerY));
+	
+	steps := 1;
+	For j := 0 to 5 do
+	Begin
+		If(steps < dists[j]) Then
+			steps := dists[j];
+	End;
+
+	ix1 := ABS(x1-centerX)/steps;
+	ix2 := ABS(x2-centerX)/steps;
+	ix3 := ABS(x3-centerX)/steps;
+
+	iy1 := ABS(y1-centerY)/steps;
+	iy2 := ABS(y2-centerY)/steps;
+	iy3 := ABS(y3-centerY)/steps;
+
 	Repeat
 		gDrawTriangle(x1,y1,x2,y2,x3,y3,color);
-		If(x1 > centerX) Then x1 := x1 - i
-		Else x1 := x1 + i;
-		If(x2 > centerX) Then x2 := x2 - i
-		Else x2 := x2 + i;
-		If(x3 > centerX) Then x3 := x3 - i
-		Else x3 := x3 + i;
+		If(x1 > centerX + i) Then x1 := x1 - ix1
+		Else If(x1 < centerX - i) Then x1 := x1 + ix1;
+		If(x2 > centerX + i) Then x2 := x2 - ix2
+		Else If(x2 < centerX - i) Then x2 := x2 + ix2;
+		If(x3 > centerX + i) Then x3 := x3 - ix3
+		Else If(x3 < centerX - i) Then x3 := x3 + ix3;
 
-		If(y1 > centerY) Then y1 := y1 - i
-		Else y1 := y1 + i;
-		If(y2 > centerY) Then y2 := y2 - i
-		Else y2 := y2 + i;
-		If(y3 > centerY) Then y3 := y3 - i
-		Else y3 := y3 + i;
+		If(y1 > centerY + i) Then y1 := y1 - iy1
+		Else If(y1 < centerY - i) Then y1 := y1 + iy1;
+		If(y2 > centerY + i) Then y2 := y2 - iy2
+		Else If(y2 < centerY - i) Then y2 := y2 + iy2;
+		If(y3 > centerY + i) Then y3 := y3 - iy3
+		Else If(y3 < centerY - i) Then y3 := y3 + iy3;
 	Until ((ABS(x1-centerX) < i) and ((ABS(x2-centerX) < i)) and (ABS(x3-centerX) < i)) and ((ABS(y1-centerY) < i) and ((ABS(y2-centerY) < i)) and (ABS(y3-centerY) < i));
 End;
 
