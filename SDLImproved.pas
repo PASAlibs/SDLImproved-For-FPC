@@ -48,7 +48,9 @@ Procedure gDrawPoly(points : Vertices; color : gColor);
 Procedure gFillPoly(v : Vertices; color : gColor);
 Procedure gDrawImage(img : gImage; x,y : Real; mode : byte; scaleX,scaleY : Real);
 Procedure gDrawImage(img : gImage; x,y : Real; mode : byte; scale : Real);
+Procedure gDrawImage(img : gImage; x,y : Real; scale : Real);
 Procedure gDrawImage(img : gImage; x,y : Real; mode : byte);
+Procedure gDrawImage(img : gImage; x,y : Real);
 
 
 Implementation
@@ -368,11 +370,20 @@ Begin
 	gDrawImage(img,x,y,mode,scale,img^.h*scale);
 End;
 
+Procedure gDrawImage(img : gImage; x,y : Real; scale : Real);
+Begin
+	gDrawImage(img,x,y,G_UP_LEFT,scale,img^.h*scale);
+End;
+
 Procedure gDrawImage(img : gImage; x,y : Real; mode : byte);
 Begin
 	gDrawImage(img,x,y,mode,img^.w,img^.h);
 End;
 
+Procedure gDrawImage(img : gImage; x,y : Real);
+Begin
+	gDrawImage(img,x,y,G_UP_LEFT,img^.w,img^.h);
+End;
 
 Initialization
 	AppStarted := False;
