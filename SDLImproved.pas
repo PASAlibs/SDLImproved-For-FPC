@@ -367,12 +367,12 @@ end;
 
 Procedure gDrawImage(img : gImage; x,y : Real; mode : byte; scale : Real);
 Begin
-	gDrawImage(img,x,y,mode,scale,img^.h*scale);
+	gDrawImage(img,x,y,mode,img^.w*scale,img^.h*scale);
 End;
 
 Procedure gDrawImage(img : gImage; x,y : Real; scale : Real);
 Begin
-	gDrawImage(img,x,y,G_UP_LEFT,scale,img^.h*scale);
+	gDrawImage(img,x,y,G_UP_LEFT,img^.w*scale,img^.h*scale);
 End;
 
 Procedure gDrawImage(img : gImage; x,y : Real; mode : byte);
