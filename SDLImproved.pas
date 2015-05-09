@@ -30,6 +30,7 @@ Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; mou
 	Procedure StartApp(load : loadType ; update : updateType ; draw : drawType ; keypressed : keypressedType);
 Procedure StartApp(load : loadType ; update : updateType ; draw : drawType);
 
+Procedure StopApp();
 	
 Procedure WindowSetting(Caption : PChar);
 Procedure WindowSetting(Caption : PChar; width,height : Word);
@@ -60,6 +61,7 @@ Var
 	AppStarted,focus : Boolean;
 	keymap : array[0..512] of Boolean;
 	mousePosition : Point;
+	stop : Boolean;
 
 Function TimeMS() : Real;
 Begin 
@@ -96,12 +98,6 @@ Begin
 	delatimer := TimeMS;
 	fpstimer := TimeMS;
 	Repeat
-		dt := TimeMS - delatimer;
-		If(dt <> 0) Then
-		Begin
-			update(dt);
-			delatimer := TimeMS;
-		End;
 		focus := (sdl_get_mouse_x <> 0) and (sdl_get_mouse_y <> 0);
 		If(focus) Then
 		Begin
@@ -138,15 +134,22 @@ Begin
 			If(keymap[i]) Then
 				keypressed(i, False);
 
-		If((TimeMS - fpstimer) > (1000/60)) Then
+		dt := TimeMS - delatimer;
+		If(dt <> 0) Then
+		Begin
+			update(dt);
+			delatimer := TimeMS;
+		End;
+
+		If(((TimeMS - fpstimer) > (1000/60) )and (dt <> 0)) Then
 		Begin
 			gClear(BLACK);
 			draw(1000/(TimeMS - fpstimer));
 			gFlip();
 
-			While (sdl_update = 1) Do
+			While ((sdl_update = 1) or stop) Do
 			Begin
-				If (sdl_do_quit) Then
+				If (sdl_do_quit or stop) Then
 					exit;
 			End;
 			fpstimer := TimeMS;
@@ -175,6 +178,11 @@ End;
 Procedure StartApp(load : loadType ; update : updateType ; draw : drawType );
 Begin
 	StartApp(load,update,draw,@emptymousepressed,@emptykeypressed);
+End;
+
+Procedure StopApp();
+Begin
+	stop := True;
 End;
 
 Function isKeyDown(k : Word) : Boolean;
